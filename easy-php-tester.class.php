@@ -36,13 +36,15 @@ class test
         {
             self::$testsSucceded[] = array('function'       => $function,
                                            'args'           => $args,
-                                           'exceptedResult' => $exceptedResult);
+                                           'exceptedResult' => $exceptedResult,
+                                           'testType'       => '===');
         }
         else //Failed
         {
             self::$testsFailed[] = array('function'       => $function,
                                          'args'           => $args,
-                                         'exceptedResult' => $exceptedResult);
+                                         'exceptedResult' => $exceptedResult,
+                                         'testType'       => '===');
         }
 
 
@@ -65,6 +67,20 @@ class test
                     //square(4) !== 8. (on line XXX in file YYY)
                     //square(4) !== "16". 
                     //Note !== istället för ===
+
+
+                    foreach(self::$testsFailed as $the)
+                    {
+                        $testOperator   = self::invertLogicOperator($the['testType']);
+                        $args           = implode(",", self::addTypesTo($the['args']));
+                        $exceptedResult = self::addTypesTo($the['exceptedResult']);
+
+                        //square(4) !== "16"
+                        echo $the['function'] ."(". $args .") ". $testOperator ." ". $exceptedResult;
+
+                        echo ". On line: " . chr(10);
+
+                    }
                 }
                 else
                 {
@@ -91,6 +107,61 @@ class test
             //include(__SELF__) (rekursiv loop)
         //
             //Vänta i 1 sekund, kolla igen
+    }
+
+
+
+
+
+    //-----------------------------------
+    // Private functions
+    //-----------------------------------
+
+
+    /**
+     * @example invertLogicOperator("===") -> "!=="
+     * @example invertLogicOperator("!=") -> "=="
+     */
+    private static function invertLogicOperator($operator)
+    {
+        switch ($operator)
+        {
+            case '==':  return '!=';
+            case '===': return '!==';
+
+            case '!=':  return '==';
+            case '!==': return '===';
+
+            default:
+                exit("Didn't find the invert for ". $operator .". On line: ". __LINE__);
+                break;
+        }
+    }
+
+
+    /**
+     * @example addTypesTo('hej') --> array('"hej"')
+     * @example addTypesTo(array('16', 16, 'mu')) --> array('"16"', 16, '"mu"')
+     */
+    private static function addTypesTo($x)
+    {
+        if(is_array($x))
+        {
+            array_walk($x, function(&$value, &$key) {
+    
+                var_dump($value);
+                if(is_string($value)) {
+                    $value = '"'. $value .'"';
+                    echo "HEJ";
+                }
+            });
+        }
+        elseif(is_string($x))
+        {
+            $x = '"'. $x .'"';
+        }
+
+        return $x;
     }
 }
 
