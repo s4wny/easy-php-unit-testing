@@ -130,7 +130,6 @@ class test
             array_walk($x, function(&$value, &$key) {
                 if(is_string($value)) {
                     $value = '"'. $value .'"';
-                    echo "HEJ";
                 }
             });
         }
