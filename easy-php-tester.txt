@@ -1,0 +1,74 @@
+<?php
+
+require 'easy-php-tester.php';
+require 'file-to-test.php';
+
+
+test::set('output', array('minimal', 'errors', 'success'));
+
+test::if('square', 4, 16); //Test 1 passed.
+
+
+test::set('output', 'maximal');
+test::if('square', 4, 16); //Test 1 passed. square(4) == 16.
+
+test::set('testing', 'strict');
+test::if('square', 4, "16"); //Test 1 failed at line XXX. square(4) !== 16.
+
+
+test::if('blargh', "arg1", 23, "arg3", "is equal to this?");
+test::if('blargh', "arg1", 23, "arg3", "is equal to this?");
+test::if('blargh', "arg1", 23, "arg3", "is equal to this?");
+test::if('blargh', "arg1", 23, "arg3", "is equal to this?");
+#test::if('blargh')->with_args("arg1", 23, "arg3")->is_equal_to("is equal to this?");
+
+class foo {
+    function bar() {
+        ...
+    }
+}
+$foo = new foo();
+
+test::if(array($foo, 'bar'), 'arg1', 23, 'arg3', 'is equal to this?');
+
+test::watch('file-to-test.php'); //Run this test file evyertime 'file-to-test.php' is updated.
+
+
+///////////////////
+//// Example 1 ///
+/////////////////
+
+require 'easy-php-tester.php';
+require '../tableMaker.php';
+
+test::if('tableMaker::generate',
+         "{id, namn, pass} {0, demo, 1234} {1, admin, admin}", function() {
+    return <<<CODE
++----+-------+-------+
+| id | namn  | pass  |
++----+-------+-------+
+| 0  | demo  | 1234  |
++----+-------+-------+
+| 1  | admin | admin |
++----+-------+-------+
+CODE;
+});
+
+
+test::if('tableMaker::generate', "{y = 2x + m} {x, y} {0, 1}", function() {
+    return <<<CODE
++-------------+
+| y = 2x + m  |
++-------------+
+| x | y       |
++-------------+
+| 0 | 1       |
++-------------+
+CODE;
+});
+
+test::watch('../tableMaker.php');
+
+
+
+?>
