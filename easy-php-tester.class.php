@@ -55,36 +55,7 @@ class test
         if(!self::$hasRegistredShutdownFunc)
         {
             register_shutdown_function(function() {
-
-                $testsFailed   = count(self::$testsFailed);
-                $testsSucceded = count(self::$testsSucceded);
-                $totalTestes   = $testsFailed + $testsSucceded;
-
-                //Some testes failed
-                if($testsFailed > 0)
-                {
-                    echo $testsFailed . " testes of ". $totalTestes ." testes failed!\n\n";
-
-                    echo "--Log--\n";
-
-
-                    foreach(self::$testsFailed as $the)
-                    {
-                        $testOperator   = self::invertLogicOperator($the['testType']);
-                        $args           = implode(",", self::addTypesTo($the['args']));
-                        $exceptedResult = self::addTypesTo($the['exceptedResult']);
-
-
-                        //echo square(4) !== "16"
-                        echo $the['function'] ."(". $args .") ". $testOperator ." ". $exceptedResult;
-
-                        echo ". On line: ". $the['line'] .chr(10);
-                    }
-                }
-                else
-                {
-                    echo "All ". $totalTestes ." succeseded!\n";
-                }
+                self::printTestResults();
             });
 
             self::$hasRegistredShutdownFunc = true;
@@ -92,13 +63,31 @@ class test
     }
 
 
-    static function watch($file)
-    {
-        //har $file uppdaterats?
-            //include(__SELF__) (rekursiv loop)
-        //
-            //Vänta i 1 sekund, kolla igen
-    }
+    //You can't redeclare functions in php, so this wont work. And PCNTL aren't available at windows :(
+    //static function watch($file, $functionToRun)
+    //{
+    //    $functionToRun();
+    //    self::printTestResults();
+    //
+    //    $lastEdited = filemtime($file);
+    //    
+    //    while(1)
+    //    {
+    //        clearstatcache();
+    //    
+    //        if(filemtime($file) > $lastEdited)
+    //        {
+    //            $lastEdited = filemtime($file);
+    //
+    //
+    //            $functionToRun();
+    //            self::printTestResults();
+    //
+    //        }
+    //    
+    //        sleep(1);
+    //    }
+    //}
 
 
 
@@ -151,6 +140,50 @@ class test
         }
 
         return $x;
+    }
+
+
+    /**
+     *
+     */
+    private static function printTestResults()
+    {
+        $testsFailed   = count(self::$testsFailed);
+        $testsSucceded = count(self::$testsSucceded);
+        $totalTestes   = $testsFailed + $testsSucceded;
+
+        //Some testes failed
+        if($testsFailed > 0)
+        {
+            echo $testsFailed . " testes of ". $totalTestes ." testes failed!\n\n";
+
+            echo "---- Log ----\n\n";
+
+
+            foreach(self::$testsFailed as $the)
+            {
+                $testOperator   = self::invertLogicOperator($the['testType']);
+                $args           = implode(",", self::addTypesTo($the['args']));
+                $exceptedResult = self::addTypesTo($the['exceptedResult']);
+
+
+                //echo square(4) !== "16"
+                echo $the['function'] ."(". $args .") ". $testOperator ." ". $exceptedResult;
+
+                echo ". On line: ". $the['line'] .chr(10);
+            }
+        }
+        else
+        {
+            echo "All ". $totalTestes ." succeseded!\n";
+        }
+
+
+        echo "\n------------------------------\n\n\n";
+
+
+        self::$testsSucceded = array();
+        self::$testsFailed   = array();
     }
 }
 

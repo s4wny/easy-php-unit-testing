@@ -1,6 +1,6 @@
 <?php
 
-require '../easy-php-tester.class.php';
+require_once '../easy-php-tester.class.php';
 
 function square($x)
 {
