@@ -12,6 +12,4 @@ test::assertEqual('square', 4, 16);
 test::assertEqual('square', 4, "16");
 test::assertEqual('square', 4, 8);
 
-
-
 ?>

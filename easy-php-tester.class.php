@@ -28,45 +28,44 @@ class test
         $args           = func_get_args();
         $function       = array_shift($args);
         $exceptedResult = array_pop($args);
-
         $leftSideValue  = call_user_func_array($function, $args);
 
+        
+        $debug = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+        $tmp   = array('function'        => $function,
+                       'args'            => $args,
+                       'exceptedResult'  => $exceptedResult,
+                       'testType'        => '===',
+                       'line'            => $debug[0]['line'],
+                       'file'            => $debug[0]['file']);
 
-        if($leftSideValue === $exceptedResult) //Success
-        {
-            self::$testsSucceded[] = array('function'       => $function,
-                                           'args'           => $args,
-                                           'exceptedResult' => $exceptedResult,
-                                           'testType'       => '===');
+
+        //Assertion
+        if($leftSideValue === $exceptedResult) { //Success
+            self::$testsSucceded[] = $tmp;     
         }
-        else //Failed
-        {
-            self::$testsFailed[] = array('function'       => $function,
-                                         'args'           => $args,
-                                         'exceptedResult' => $exceptedResult,
-                                         'testType'       => '===');
+        else { //Failed
+            self::$testsFailed[] = $tmp;
         }
 
+        unset($tmp, $debug);
 
 
-
-        if(!self::$hasRegistredShutdownFunc) {
+        //When last test has runed, run this:
+        if(!self::$hasRegistredShutdownFunc)
+        {
             register_shutdown_function(function() {
 
                 $testsFailed   = count(self::$testsFailed);
                 $testsSucceded = count(self::$testsSucceded);
                 $totalTestes   = $testsFailed + $testsSucceded;
 
+                //Some testes failed
                 if($testsFailed > 0)
                 {
                     echo $testsFailed . " testes of ". $totalTestes ." testes failed!\n\n";
 
                     echo "--Log--\n";
-
-                    //Loopa ut vad som failade
-                    //square(4) !== 8. (on line XXX in file YYY)
-                    //square(4) !== "16". 
-                    //Note !== istället för ===
 
 
                     foreach(self::$testsFailed as $the)
@@ -75,11 +74,11 @@ class test
                         $args           = implode(",", self::addTypesTo($the['args']));
                         $exceptedResult = self::addTypesTo($the['exceptedResult']);
 
-                        //square(4) !== "16"
+
+                        //echo square(4) !== "16"
                         echo $the['function'] ."(". $args .") ". $testOperator ." ". $exceptedResult;
 
-                        echo ". On line: " . chr(10);
-
+                        echo ". On line: ". $the['line'] .chr(10);
                     }
                 }
                 else
@@ -88,17 +87,9 @@ class test
                 }
             });
 
-
             self::$hasRegistredShutdownFunc = true;
         }
     }
-
-
-    static function set($key, $value)
-    {
-
-    }
-
 
 
     static function watch($file)
@@ -148,8 +139,6 @@ class test
         if(is_array($x))
         {
             array_walk($x, function(&$value, &$key) {
-    
-                var_dump($value);
                 if(is_string($value)) {
                     $value = '"'. $value .'"';
                     echo "HEJ";
