@@ -41,7 +41,7 @@ class test
 
 
         //Assertion
-        if($leftSideValue === $exceptedResult) { //Success
+        if($leftSideValue == $exceptedResult) { //Success
             self::$testsSucceded[] = $tmp;     
         }
         else { //Failed
