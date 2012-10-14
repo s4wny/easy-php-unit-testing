@@ -2,7 +2,13 @@
 Easy PHP unit testing
 =====================
 
-This script is right now designed to run from the command line but I will maybe add webbrowser support in the future.
+**Why?**
+
+ - **one file**
+ - **easy to use**
+
+
+Note: This script is right now *designed to run from the command line* but I will maybe add webbrowser support in the future.
 
 Installing
 ==========
